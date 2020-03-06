@@ -13,7 +13,7 @@ npm i json-api-transform
 * `url` - The URL of the API endpoint
 * `options` - A fetch options object that is compatible with [`node-fetch`](https://www.npmjs.com/package/node-fetch#fetchurl-options).
 * `mapping` - A [mapping object](#mapping-object).
-* `baseMapping` - An object that holds the starting point *path* for the mapping. Default is "root".
+* `baseMapping` - An object that holds the starting point [path](#path) for the mapping. Default is "root".
 
 ### mapping object
 This object holds the configurations to tranform the API response to the desired object.
@@ -21,7 +21,7 @@ Currently only mapping for top level keys is supported.
 
 1. Keys: String. represents a key name in the tranformed result. Currently dynamic key names are not supported.
 2. Values, One of two options: 
-  1. String. hold the *path* to the desired value in the API response.
+  1. String. hold the [path](#path) to the desired value in the API response.
   2. Object. A [mapping operation](#mapping-operation) for array items.
 
 #### mapping operation
