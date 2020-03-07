@@ -44,5 +44,24 @@ module.exports = {
       second_item: "root[1].id"
     },
     expected: { second_item: 2 }
+  },
+  test4: {
+    response: { items: [1, 2, 3] },
+    mapping: { res: "root.items" },
+    expected: { res: [1, 2, 3] }
+  },
+  test6: {
+    response: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    mapping: {
+      normalized: {
+        __operation: "array_trasform",
+        args: {
+          index: "root.id"
+        }
+      }
+    },
+    expected: {
+      normalized: [{ index: 1 }, { index: 2 }, { index: 3 }]
+    }
   }
 };

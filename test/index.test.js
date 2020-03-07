@@ -24,18 +24,20 @@ describe(`@JAT tests`, function() {
     revert = JAT.__set__("fetch", rewiredFetch);
   });
 
-  it("@test1 - mapping of scalars (string, boolean and number)", () =>
-    fetchTestSet("test1"));
-  it("@test2 - mapping of scalars with baseMapping", () =>
-    fetchTestSet("test2"));
+  it("@test1 - transform scalars", () => fetchTestSet("test1"));
+  it("@test2 - transform scalars (baseMapping)", () => fetchTestSet("test2"));
   it("@test3 - transform an array response", () => fetchTestSet("test3"));
-  it("@test4 - mapping of an array", () => {
-    throw new Error("NOP");
-  });
+  it("@test4 - mapping of an array", () => fetchTestSet("test4"));
   it("@test5 - mapping of an object", () => {
     throw new Error("NOP");
   });
   it("@test6 - mapping with array_trasform", () => {
+    throw new Error("NOP");
+  });
+  it("@test7 - 2-layered mapping", () => {
+    throw new Error("NOP");
+  });
+  it("@test8 - 2-layered array_transform", () => {
     throw new Error("NOP");
   });
   after(() => {
