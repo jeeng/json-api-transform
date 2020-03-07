@@ -56,12 +56,13 @@ module.exports = {
     expected: { res: { a: "a", b: "b", c: 3 } }
   },
   test6: {
-    response: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    response: { items: [{ id: 1 }, { id: 2 }, { id: 3 }] },
     mapping: {
       normalized: {
-        __operation: "array_trasform",
+        __operation: "array_transform",
         args: {
-          index: "root.id"
+          path: "root.items",
+          mapping: { index: "root.id" }
         }
       }
     },

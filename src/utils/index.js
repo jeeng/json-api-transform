@@ -1,4 +1,20 @@
-const operate = ({ __operation, args }) => {};
+const operate = (root, { __operation, args }) => {
+  switch (__operation) {
+    case "array_transform":
+      const { path, mapping } = args;
+      const origin = this.getPath({ root }, path);
+      if (origin === null)
+        throw new Error(
+          "Transfrom Error: array_transform path doesn'nt exist."
+        );
+      if (!Array.isArray(origin))
+        throw new Error("Transfrom Error: array_transform path not an Array.");
+      return origin.map(item => this.transform(item, mapping));
+
+    default:
+      throw new Error("Transfrom Error: unsupported operation: " + __operation);
+  }
+};
 
 module.exports.getPath = (obj, path) => {
   let varsPath = path.split(".");
@@ -24,7 +40,7 @@ module.exports.getPath = (obj, path) => {
 };
 
 module.exports.transform = (root, mapping) => {
-  transformed = {};
+  const transformed = {};
   Object.keys(mapping).forEach(key => {
     const value = mapping[key];
     switch (typeof value) {
@@ -33,7 +49,7 @@ module.exports.transform = (root, mapping) => {
           return Object.assign(transformed, {
             [key]: this.transform(root, value)
           });
-        return Object.assign(transformed, { [key]: operate(value) });
+        return Object.assign(transformed, { [key]: operate(root, value) });
       case "string":
         return Object.assign(transformed, {
           [key]: this.getPath({ root }, value)
