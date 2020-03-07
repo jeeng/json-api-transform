@@ -1,5 +1,6 @@
 const rewire = require("rewire");
 const JAT = rewire("../src");
+const originalJAT = require("../src");
 const testSets = require("./testSets");
 
 const chai = require("chai");
@@ -32,7 +33,20 @@ describe(`@JAT tests`, function() {
   it("@test6 - mapping with array_trasform", () => fetchTestSet("test6"));
   it("@test7 - 2-layered mapping", () => fetchTestSet("test7"));
   it("@test8 - 2-layered array_transform", () => fetchTestSet("test8"));
-  after(() => {
-    revert();
+  it("@test9 - real fetch", async () => {
+    const res = await originalJAT.fetch(
+      "https://postman-echo.com/get?foo1=bar1&foo2=bar2",
+      {},
+      {
+        foo1: "root.args.foo1",
+        foo2: "root.args.foo2",
+        host: { name: "root.headers.host" }
+      }
+    );
+    expect(res).to.deep.equal({
+      foo1: "bar1",
+      foo2: "bar2",
+      host: { name: "postman-echo.com" }
+    });
   });
 });
