@@ -23,15 +23,7 @@ module.exports.getPath = (obj, path) => {
   return currval;
 };
 
-module.exports.transform = (obj, mapping, baseMapping) => {
-  let root = obj;
-  if (baseMapping) {
-    baseValue = this.getPath({ root }, baseMapping);
-    if (!baseValue)
-      throw (new Error("Transform Error: baseMapping failed.")({
-        root
-      }) = baseValue);
-  }
+module.exports.transform = (root, mapping) => {
   transformed = {};
   Object.keys(mapping).forEach(key => {
     const value = mapping[key];

@@ -26,9 +26,8 @@ describe(`@JAT tests`, function() {
 
   it("@test1 - mapping of scalars (string, boolean and number)", () =>
     fetchTestSet("test1"));
-  it("@test2 - mapping of scalars with baseMapping", () => {
-    throw new Error("NOP");
-  });
+  it("@test2 - mapping of scalars with baseMapping", () =>
+    fetchTestSet("test2"));
   it("@test3 - transform an array response", () => {
     throw new Error("NOP");
   });
