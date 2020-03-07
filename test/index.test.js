@@ -1,24 +1,29 @@
-const JAT = require("../src");
+const rewire = require("rewire");
+const JAT = rewire("../src");
 const testSets = require("./testSets");
 
 const chai = require("chai");
 const expect = chai.expect;
 
-const fetchTestSet = name => {
+const fetchTestSet = async name => {
   const { response: body, mapping, baseMapping, expected } = testSets[name];
-  const transform = JAT.fetch(
+  const transform = await JAT.fetch(
     "https://example.com",
-    { method: "POST", body },
+    { body },
     mapping,
     baseMapping
   );
   expect(transform).to.deep.equal(expected);
 };
 
+const rewiredFetch = async (_, { body }) => ({ json: () => body });
+
 describe(`@JAT tests`, function() {
+  let revert;
   before(() => {
-    // rewire fetch
+    revert = JAT.__set__("fetch", rewiredFetch);
   });
+
   it("@test1 - mapping of scalars (string, boolean and number)", () =>
     fetchTestSet("test1"));
   it("@test2 - mapping of scalars with baseMapping", () => {
@@ -37,6 +42,6 @@ describe(`@JAT tests`, function() {
     throw new Error("NOP");
   });
   after(() => {
-    // revert rewiring
+    revert();
   });
 });

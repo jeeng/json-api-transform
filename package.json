@@ -4,7 +4,9 @@
   "description": "This module provides the ability to safely transform responses of different API requests using configuration alone.",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha 'test/**/*.test.js'"
+    "test": "mocha 'test/**/*.test.js'",
+    "test:l": "npm run test:label",
+    "test:label": "node_modules/.bin/mocha 'test/**/*.test.js' --grep"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,10 @@
   "homepage": "https://github.com/jeeng/json-api-transform#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^7.1.0"
+    "mocha": "^7.1.0",
+    "rewire": "^4.0.1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
   }
 }
