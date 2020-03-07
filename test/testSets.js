@@ -69,5 +69,31 @@ module.exports = {
     expected: {
       normalized: [{ index: 1 }, { index: 2 }, { index: 3 }]
     }
+  },
+  test7: {
+    response: [1, 2, 3],
+    mapping: {
+      a: {
+        b: "root[1]"
+      }
+    },
+    expected: { a: { b: 2 } }
+  },
+  test8: {
+    response: [1, 2, 3],
+    mapping: {
+      a: {
+        b: {
+          __operation: "array_transform",
+          args: {
+            path: "root",
+            mapping: {
+              index: "root"
+            }
+          }
+        }
+      }
+    },
+    expected: { a: { b: [{ index: 1 }, { index: 2 }, { index: 3 }] } }
   }
 };

@@ -30,12 +30,8 @@ describe(`@JAT tests`, function() {
   it("@test4 - mapping of an array", () => fetchTestSet("test4"));
   it("@test5 - mapping of an object", () => fetchTestSet("test5"));
   it("@test6 - mapping with array_trasform", () => fetchTestSet("test6"));
-  it("@test7 - 2-layered mapping", () => {
-    throw new Error("NOP");
-  });
-  it("@test8 - 2-layered array_transform", () => {
-    throw new Error("NOP");
-  });
+  it("@test7 - 2-layered mapping", () => fetchTestSet("test7"));
+  it("@test8 - 2-layered array_transform", () => fetchTestSet("test8"));
   after(() => {
     revert();
   });
