@@ -28,9 +28,7 @@ describe(`@JAT tests`, function() {
     fetchTestSet("test1"));
   it("@test2 - mapping of scalars with baseMapping", () =>
     fetchTestSet("test2"));
-  it("@test3 - transform an array response", () => {
-    throw new Error("NOP");
-  });
+  it("@test3 - transform an array response", () => fetchTestSet("test3"));
   it("@test4 - mapping of an array", () => {
     throw new Error("NOP");
   });

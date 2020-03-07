@@ -41,7 +41,7 @@ module.exports = {
   test3: {
     response: [{ id: 1 }, { id: 2 }, { id: 3 }],
     mapping: {
-      second_item: "root[1]"
+      second_item: "root[1].id"
     },
     expected: { second_item: 2 }
   }
