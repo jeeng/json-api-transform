@@ -50,6 +50,11 @@ module.exports = {
     mapping: { res: "root.items" },
     expected: { res: [1, 2, 3] }
   },
+  test5: {
+    response: { props: { a: "a", b: "b", c: 3 } },
+    mapping: { res: "root.props" },
+    expected: { res: { a: "a", b: "b", c: 3 } }
+  },
   test6: {
     response: [{ id: 1 }, { id: 2 }, { id: 3 }],
     mapping: {
