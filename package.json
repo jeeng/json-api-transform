@@ -1,5 +1,5 @@
 {
-  "name": "json-api-transform",
+  "name": "transform-json-api",
   "version": "0.0.1",
   "description": "This module provides the ability to safely transform responses of different API requests using configuration alone.",
   "main": "src/index.js",
