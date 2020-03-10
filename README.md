@@ -82,3 +82,6 @@ Should store in `transform` the following object:
   item-names: [ "item 1", "item 2" ]
 }
 ```
+
+# License
+This package is licensed under the MIT license.
