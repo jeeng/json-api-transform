@@ -1,11 +1,11 @@
-# JSON API Transform
+# Transform JSON API
 
 This module provides the ability to safely transform responses of different API requests using configuration alone.
 
 
 ## install
 ```
-npm i json-api-transform
+npm i transform-json-api
 ```
 ## usage
 ### `fetch(url, options, mapping, baseMapping = null)`
