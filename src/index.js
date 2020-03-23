@@ -1,9 +1,9 @@
-const fetch = require("node-fetch");
+const fetch = require("./utils/fetch");
 const { getPath, transform } = require("./utils");
 
 module.exports = class JAT {
   static async fetch(url, options, mapping, baseMapping) {
-    const response = await fetch(url, options).then(res => res.json());
+    const response = await fetch(url, options);
     const root = baseMapping
       ? getPath({ root: response }, baseMapping)
       : response;
