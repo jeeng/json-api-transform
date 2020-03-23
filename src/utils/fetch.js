@@ -20,7 +20,11 @@ module.exports = (url, options = {}) => {
   const { body } = options;
   delete options.body;
 
-  const opts = Object.assign({}, urlOptions, options);
+  const opts = Object.assign(
+    { agent: new client.Agent({ pool: false, compress: true }) },
+    urlOptions,
+    options
+  );
   opts.headers = opts.headers || {};
   opts.headers["Content-Type"] = "application/json";
 
