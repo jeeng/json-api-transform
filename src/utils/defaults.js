@@ -1,5 +1,5 @@
 module.exports.fetchOptions = {
-  timeout: 10000,
+  timeout: process.env.JTA_FETCH_TIMEOUT || 10000,
 };
 
 module.exports.agentOptions ={
