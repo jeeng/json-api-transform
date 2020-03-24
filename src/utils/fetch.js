@@ -1,6 +1,6 @@
 const { URL } = require("url");
 const clients = { "http:": require("http"), "https:": require("https") };
-const defaultPorts = { "http:": 80, "https:": 443 };
+const defaults = require('./defaults');
 
 module.exports = (url, options = {}) => {
   const u = new URL(url);
@@ -21,7 +21,8 @@ module.exports = (url, options = {}) => {
   delete options.body;
 
   const opts = Object.assign(
-    { agent: new client.Agent({ maxSockets: Infinity, keepAlive: false }) },
+    { agent: new client.Agent(defaults.agentOptions) },
+    defaults.fetchOptions,
     urlOptions,
     options
   );
@@ -36,6 +37,10 @@ module.exports = (url, options = {}) => {
         resp.on("end", () => resolve(JSON.parse(data)));
       })
       .on("error", err => reject(err));
+
+      req.setTimeout((opts.timeout), () => {
+        req.abort();
+      });
 
     if (body) req.write(JSON.stringify(body));
     req.end();
