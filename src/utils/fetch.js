@@ -17,11 +17,15 @@ module.exports = (url, options = {}) => {
     path: pathname + search + hash
   };
 
-  const { body } = options;
+  const { agent, body } = options;
   delete options.body;
 
+
+  const agentOptions = Object.assign(defaults.agentOptions, agent === Object(agent) && agent);
+  delete options.agent;
+
   const opts = Object.assign(
-    { agent: new client.Agent(defaults.agentOptions) },
+    { agent: new client.Agent(agentOptions) },
     defaults.fetchOptions,
     urlOptions,
     options
