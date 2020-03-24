@@ -38,9 +38,7 @@ module.exports = (url, options = {}) => {
       })
       .on("error", err => reject(err));
 
-      req.setTimeout((opts.timeout), () => {
-        req.abort();
-      });
+      req.setTimeout(opts.timeout, req.abort);
 
     if (body) req.write(JSON.stringify(body));
     req.end();
