@@ -21,7 +21,7 @@ module.exports = (url, options = {}) => {
   delete options.body;
 
   const opts = Object.assign(
-    { agent: new client.Agent({ pool: false, compress: true }) },
+    { agent: new client.Agent({ maxSockets: Infinity, keepAlive: false }) },
     urlOptions,
     options
   );
