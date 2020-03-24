@@ -20,7 +20,8 @@ module.exports = (url, options = {}) => {
   const { agent, body } = options;
   delete options.body;
 
-  const agentOptions = Object.assign(defaults.agentOptions, agent);
+
+  const agentOptions = Object.assign(defaults.agentOptions, agent === Object(agent) && agent);
   delete options.agent;
 
   const opts = Object.assign(
