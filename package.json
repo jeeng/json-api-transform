@@ -1,6 +1,6 @@
 {
   "name": "transform-json-api",
-  "version": "0.0.2",
+  "version": "0.5.0",
   "description": "This module provides the ability to safely transform responses of different API requests using configuration alone.",
   "main": "src/index.js",
   "scripts": {
@@ -30,7 +30,5 @@
     "nyc": "^15.0.0",
     "rewire": "^4.0.1"
   },
-  "dependencies": {
-    "node-fetch": "^2.6.0"
-  }
+  "dependencies": {}
 }

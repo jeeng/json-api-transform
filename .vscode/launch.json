@@ -6,7 +6,7 @@
       "name": "Debug Mocha Test",
       "type": "node",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
-      "runtimeArgs": ["test/**/*.test.js", "--grep", "@test9"],
+      "runtimeArgs": ["test/**/*.test.js", "--grep", "@test10"],
       "stopOnEntry": false,
       "cwd": "${workspaceFolder}/",
       "env": {
