@@ -29,10 +29,9 @@ const getKeyWithType = key => {
 
 function parsePath(str) {
   let match;
-  let hierarchy = 0;
+  let level = 0;
   let mute = 0;
   let lastPos = 0;
-  let dots = [];
   let segments = [];
 
   const delimiters = [']', '[', ')', '(', '.'];
@@ -41,33 +40,19 @@ function parsePath(str) {
   while ((match = regexp.exec(str + '.')) !== null) {
     const {0: char, index: pos} = match;
 
-    if (char === '(') {
-      ++mute;
-      continue;
-    }
+    if (char === '(') mute++;
 
-    if (char === ')') {
-      Math.max(0, --mute);
-      continue;
-    }
+    if (char === ')' && mute > 0) mute--;
 
     if (mute) continue;
 
     const substr = str.substring(lastPos, pos);
+    const isOpeningBracket = char === '[' && level++ === 0;
+    const isClosingBracket = char === ']' && (level = Math.max(0, --level)) === 0;
 
-    if (str.length === pos) {
-      segments = segments.concat(dots, substr);
-    }
-
-    else if (char === '.') {
-      dots.push(substr);
+    if (isOpeningBracket || isClosingBracket || char === '.') {
+      segments = segments.concat(substr);
       lastPos = pos + 1;
-    }
-
-    else if ((char === '[' && hierarchy++ === 0) || char === ']' && Math.max(0, hierarchy--) === 1) {
-      segments = segments.concat(dots, substr);
-      lastPos = pos + 1;
-      dots = [];
     }
   }
 
