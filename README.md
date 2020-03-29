@@ -48,7 +48,7 @@ Supported syntax:
 Suppose API `POST https://example.com/echo` responsds with the provided JSON body.
 So this code:
 ```
-const TransformJsonAPI = require('json-api-handler');
+const TransformJsonAPI = require('transform-json-api');
 
 const url = "https://example.com/echo";
 const options = {
