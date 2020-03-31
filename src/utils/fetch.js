@@ -7,7 +7,7 @@ module.exports = (url, options = {}) => {
   const { protocol } = u;
   const client = clients[protocol];
   if (!client)
-    throw new Error("JTA fetch error: Unsupported protocol " + protocol);
+    throw new Error("TJA fetch error: Unsupported protocol " + protocol);
 
   const { hostname, port, pathname, search, hash } = u;
 

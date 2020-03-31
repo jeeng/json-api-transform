@@ -1,93 +1,120 @@
-Object.defineProperty(Array.prototype, 'flat', {
-  value: function(depth = 1) {
-    return this.reduce(function (flat, toFlatten) {
-      return flat.concat((Array.isArray(toFlatten) && (depth>1)) ? toFlatten.flat(depth-1) : toFlatten);
-    }, []);
-  }
-});
+require('array-flat-polyfill');
 
 const operators = {
-  find: (arr, path, value) => arr.find(root => this.getPath({root}, path).trim() === value),
-  filter: (arr, path, value) => arr.filter(root => this.getPath({root}, path).trim() === value),
-  map: (arr, path) => arr.map(root => this.getPath({root}, path)),
+  find: (arr, path, value) => arr.find(root => this.transform(root, path).trim() === value),
+  filter: (arr, path, value) => arr.filter(root => this.transform(root, path).trim() === value),
+  map: (arr, path) => arr.map(root => this.transform(root, path)),
   flat: (arr) => arr.flat()
 };
 
-const getKeyWithType = key => {
-  const operatorPrefixRegexp = new RegExp(Object.keys(operators).map(o => `^${o}\\(`).join('|'), 'g'); // e.g. starts with find(
+const getOperatorsArg = path => {
+  const pos = path.indexOf('(');
+  const name = path.substring(0, pos);
+  const argsStr = getBracketsArg(path.substring(pos));
 
-  if (!isNaN(parseFloat(key)) && isFinite(key)) { // (e.g. "123")
-    return ['NUMBER', key];
-  } else if (key.match(operatorPrefixRegexp) && key.endsWith(')')) { // is not string and has (:) in the middle (e.g. find:{type: 'email'})
-    return ['OPERATOR'].concat(key.split(/[(),]/g) // split by or ( or ) or ,
-      .map(item => item.trim().replace(/^'|'$/g, '').trim()) // without the surrounding single quotes
-      .filter(Boolean));
-  } else {
-    return ['STRING', key.replace(/^'|'$/g, '').trim()]; // without the surrounding single quotes
-  }
+  const args = argsStr.split(',')
+    .map(item => item.trim().replace(/^'|'$/g, '').trim())
+    .filter(Boolean);
+
+  return {name, args};
 };
 
-function parsePath(str) {
-  let match;
-  let level = 0;
-  let mute = 0;
-  let lastPos = 0;
-  let segments = [];
+const getBracketsArg = path => {
+  const brackets = {
+    "(": 0,
+    "[": 0
+  };
+  let arg = "";
+  brackets[path[0]]++;
+  [...path.substring(1)].some(char => {
+    if (char in brackets) brackets[char]++;
+    if (char === ")") brackets["("]--;
+    if (char === "]") brackets["["]--;
+    if (brackets["("] + brackets["["] === 0) return true;
+    arg += char;
+    return false;
+  });
+  return arg;
+};
 
-  const delimiters = [']', '[', ')', '(', '.'];
-  const regexp = new RegExp('\\' + delimiters.join('|\\'), 'g');
+// e.g. starts with find(
+const operatorsPattern = Object.keys(operators).map(o => `^${o}\\(`).join('|');
 
-  while ((match = regexp.exec(str + '.')) !== null) {
-    const {0: char, index: pos} = match;
+const isOperator = str => (str.match(new RegExp(operatorsPattern)) || [])[0];
 
-    if (char === '(') mute++;
+module.exports.getPath = (root, path) => {
+  path = path.startsWith('.') ? path.substring(1) : path;
 
-    if (char === ')' && mute > 0) mute--;
+  const openersPattern = '\\' + ['[', '(', '.'].join('|\\');
+  const regexp = new RegExp(openersPattern + '|' + operatorsPattern);
+  const match = path.match(regexp);
 
-    if (mute) continue;
+  if (!match) return root[path];
 
-    const substr = str.substring(lastPos, pos);
-    const isOpeningBracket = char === '[' && level++ === 0;
-    const isClosingBracket = char === ']' && (level = Math.max(0, --level)) === 0;
+  const {0: delimiter, index: pos} = match;
 
-    if (isOpeningBracket || isClosingBracket || char === '.') {
-      segments = segments.concat(substr);
-      lastPos = pos + 1;
-    }
+  let nextRoot;
+  let nextPath;
+  let key;
+
+  switch (delimiter) {
+    case ".":
+      key = path.substring(0, pos);
+      nextPath = path.substring(key.length + 1);
+      break;
+    case '[':
+      if (pos === 0) {
+        key = getBracketsArg(path);
+        nextPath = path.substring(key.length + 2);
+      } else {
+        key = path.substring(0, pos);
+        nextPath = path.substring(key.length);
+      }
+      break;
   }
 
-  return segments.map(item => item.trim()).filter(Boolean);
-}
+  if (isOperator(key)) {
+    const {name, args} = getOperatorsArg(key);
+    nextRoot = operators[name](root, ...args);
+  } else {
+    nextRoot = root[key.trim().replace(/^'|'$/g, '').trim()];
+  }
 
-module.exports.getPath = (obj, path) => {
-  const pathSegments = parsePath(path);
-  let currval = obj;
+  if (!nextPath) {
+    return nextRoot;
+  }
 
-  pathSegments.some(segment => {
-    const [type, key, ...arg] = getKeyWithType(segment);
-    if (type !== 'OPERATOR') {
-      currval = currval[key];
-    } else {
-      currval = operators[key](currval, ...arg);
-    }
-    return !currval;
-  });
+  return this.getPath(nextRoot, nextPath);
+};
 
-  return currval;
+const toJson = (mapping) => {
+  if (mapping.startsWith('{') && mapping.endsWith('}')) {
+    const [key, value] = mapping
+      .substring(1, mapping.length - 1)
+      .split(/:(.*)/)
+      .map(str => str.trim()).filter(Boolean);
+
+    return {[key]: toJson(value)};
+  }
+
+  return mapping;
 };
 
 module.exports.transform = (root, mapping) => {
-  const transformed = {};
+  let transformed = {};
 
   if (typeof mapping === "string") {
-    return this.getPath({root}, mapping);
+    mapping = toJson(mapping);
+
+    if (typeof mapping === "string")
+      return this.getPath({root}, mapping);
   }
 
   Object.keys(mapping).forEach(key => {
-    const value = mapping[key];
+    let value = mapping[key];
 
     return Object.assign(transformed, {
-      [key]: this.getPath({root}, value)
+      [key]: typeof value === 'object' ? this.transform(root, value) : this.getPath({root}, value)
     });
   });
 

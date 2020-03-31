@@ -29,5 +29,7 @@
     "mocha": "^7.1.0",
     "rewire": "^4.0.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "array-flat-polyfill": "^1.0.1"
+  }
 }

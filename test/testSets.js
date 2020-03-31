@@ -58,13 +58,7 @@ module.exports = {
   test6: {
     response: { items: [{ id: 1 }, { id: 2 }, { id: 3 }] },
     mapping: {
-      normalized: {
-        __operation: "array_transform",
-        args: {
-          path: "root.items",
-          mapping: { index: "root.id" }
-        }
-      }
+        normalized: "root.items[map({index: root.id})]"
     },
     expected: {
       normalized: [{ index: 1 }, { index: 2 }, { index: 3 }]
@@ -72,28 +66,12 @@ module.exports = {
   },
   test7: {
     response: [1, 2, 3],
-    mapping: {
-      a: {
-        b: "root[1]"
-      }
-    },
+    mapping: "{a:{b:root[1]}}",
     expected: { a: { b: 2 } }
   },
   test8: {
     response: [1, 2, 3],
-    mapping: {
-      a: {
-        b: {
-          __operation: "array_transform",
-          args: {
-            path: "root",
-            mapping: {
-              index: "root"
-            }
-          }
-        }
-      }
-    },
+    mapping: "{a:{b: root[map({index: root})]}}",
     expected: { a: { b: [{ index: 1 }, { index: 2 }, { index: 3 }] } }
   }
 };
