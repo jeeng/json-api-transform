@@ -88,4 +88,25 @@ module.exports = {
     },
     expected: { second_item: 2 }
   },
+  test13: {
+    response: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    mapping: {
+      second_item: "['root'] [1] . id"
+    },
+    expected: { second_item: 2 }
+  },
+  test14: {
+    response: [{ "i'd": 1 }, { "i'd": 2 }, { "i'd": 3 }],
+    mapping: {
+      second_item: "['root'][1]['i'd']"
+    },
+    expected: { second_item: 2 }
+  },
+  test15: {
+    response: [{ " id": 1 }, { " id": 2 }, { " id": 3 }],
+    mapping: {
+      second_item: "['root'][1][' id']"
+    },
+    expected: { second_item: 2 }
+  }
 };

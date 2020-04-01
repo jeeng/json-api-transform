@@ -70,5 +70,8 @@ describe(`@TJA tests`, function() {
     });
   });
   it("@test11 - transform mapping starts with brackets ([)", () => fetchTestSet("test11"));
-  it("@test12 - transform mapping with strings (')", () => fetchTestSet("test12"));
+  it("@test12 - transform with keys as a strings (')", () => fetchTestSet("test12"));
+  it("@test13 - transform with spaces between keys", () => fetchTestSet("test13"));
+  it("@test14 - transform with spaces in keys", () => fetchTestSet("test14"));
+  it("@test15 - transform with quote in keys", () => fetchTestSet("test15"));
 });
