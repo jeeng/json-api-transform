@@ -25,18 +25,14 @@ const getOperatorsArg = key => {
 };
 
 const getBracketsArg = path => {
-  const brackets = {
-    '(': 0,
-    '[': 0
-  };
+  const brackets = {'[': 0};
 
   let arg = '';
   brackets[path[0]]++;
   [...path.substring(1)].some(char => {
     if (char in brackets) brackets[char]++;
-    if (char === ')') brackets['(']--;
     if (char === ']') brackets['[']--;
-    if (brackets['('] + brackets['['] === 0) return true;
+    if (brackets['['] === 0) return true;
     arg += char;
     return false;
   });
@@ -86,18 +82,16 @@ module.exports.getPath = (root, path) => {
   }
 };
 
-const toJson = (mapping) => {
-  if (mapping.startsWith('{') && mapping.endsWith('}')) {
-    const [key, value] = mapping
-      .substring(1, mapping.length - 1)
-      .split(/:(.*)/)
-      .map(str => str.trim())
-      .filter(Boolean);
+const toJson = mapping => {
+  if (!mapping.startsWith('{') || !mapping.endsWith('}')) return mapping;
 
-    return {[key]: toJson(value)};
-  }
+  const [key, value] = mapping
+    .substring(1, mapping.length - 1)
+    .split(/:(.*)/)
+    .map(str => str.trim())
+    .filter(Boolean);
 
-  return mapping;
+  return {[key]: toJson(value)};
 };
 
 module.exports.transform = (root, mapping) => {
