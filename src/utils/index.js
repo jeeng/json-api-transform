@@ -1,5 +1,13 @@
 require('array-flat-polyfill');
 
+const toJson = mapping => {
+  try {
+    return JSON.parse(mapping);
+  } catch (e) {
+    return mapping;
+  }
+};
+
 const operators = {
   find: (arr, path, value) => arr.find(root => this.transform(root, path) === value),
   filter: (arr, path, value) => arr.filter(root => this.transform(root, path) === value),
@@ -17,8 +25,14 @@ const getOperatorsArg = key => {
 
   const [, name, argsStr] = match;
 
-  const args = argsStr.split(',')
-    .map(item => item.trim().replace(/^'|'$/g, ''))
+  const args = argsStr.split(/,(?![^(]*\))/g)
+    .map(item => {
+      item = item.trim();
+
+      if(!item.startsWith("'")) return toJson(item);
+
+      return item.replace(/^'|'$/g, '')
+    })
     .filter(Boolean);
 
   return {name, args};
@@ -82,24 +96,8 @@ module.exports.getPath = (root, path) => {
   }
 };
 
-const toJson = mapping => {
-  if (!mapping.startsWith('{') || !mapping.endsWith('}')) return mapping;
-
-  const [key, value] = mapping
-    .substring(1, mapping.length - 1)
-    .split(/:(.*)/)
-    .map(str => str.trim())
-    .filter(Boolean);
-
-  return {[key]: toJson(value)};
-};
-
 module.exports.transform = (root, mapping) => {
   let transformed = {};
-
-  if (typeof mapping === 'string') {
-    mapping = toJson(mapping);
-  }
 
   if (typeof mapping === 'string') {
     return this.getPath({root}, mapping);

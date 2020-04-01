@@ -58,7 +58,7 @@ module.exports = {
   test6: {
     response: { items: [{ id: 1 }, { id: 2 }, { id: 3 }] },
     mapping: {
-        normalized: "root.items[map({index: root.id})]"
+        normalized: `root.items[map({"index":"root.id"})]`
     },
     expected: {
       normalized: [{ index: 1 }, { index: 2 }, { index: 3 }]
@@ -66,12 +66,12 @@ module.exports = {
   },
   test7: {
     response: [1, 2, 3],
-    mapping: "{a:{b:root[1]}}",
+    mapping: {a:{b: "root[1]"}},
     expected: { a: { b: 2 } }
   },
   test8: {
     response: [1, 2, 3],
-    mapping: "{a:{b: root[map({index: root})]}}",
+    mapping: {a:{b: `root[map({"index":"root"})]`}},
     expected: { a: { b: [{ index: 1 }, { index: 2 }, { index: 3 }] } }
   },
   test11: {
@@ -108,5 +108,15 @@ module.exports = {
       second_item: "['root'][1][' id']"
     },
     expected: { second_item: 2 }
+  },
+  test16: {
+    response: [{ids:[[1]]}, {ids:[[2]]}, {ids:[[3]]}],
+    mapping: {a: `root[map({"items":"root.ids[flat()]"})]`},
+    expected: {a: [{items: [1]}, {items: [2]}, {items: [3]}]}
+  },
+  test17: {
+    response: [[{visible: true, id: 1}, {visible: false, id: 2}, {visible: true, id: 3}]],
+    mapping: {a: `root[map({"items":"root[filter(root.visible, true)]"})]`},
+    expected: {a: [{items: [{visible: true, id: 1}, {visible: true, id: 3}]}]}
   }
 };

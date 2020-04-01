@@ -74,4 +74,6 @@ describe(`@TJA tests`, function() {
   it("@test13 - transform with spaces between keys", () => fetchTestSet("test13"));
   it("@test14 - transform with spaces in keys", () => fetchTestSet("test14"));
   it("@test15 - transform with quote in keys", () => fetchTestSet("test15"));
+  it("@test16 - transform nested path with operators", () => fetchTestSet("test16"));
+  it("@test17 - transform nested path with multiple args ", () => fetchTestSet("test17"));
 });
