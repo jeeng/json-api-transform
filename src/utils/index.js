@@ -77,7 +77,8 @@ module.exports.getPath = (root, path) => {
     const {name, args} = getOperatorsArg(key);
     nextRoot = operators[name](root, ...args);
   } else {
-    nextRoot = root[key.trim().replace(/^'|'$/g, '').trim()];
+    const strippedKey = key.trim().replace(/^'|'$/g, '').trim();
+    nextRoot = root[strippedKey];
   }
 
   if (!nextPath) {
