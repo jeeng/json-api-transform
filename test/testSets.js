@@ -73,5 +73,19 @@ module.exports = {
     response: [1, 2, 3],
     mapping: "{a:{b: root[map({index: root})]}}",
     expected: { a: { b: [{ index: 1 }, { index: 2 }, { index: 3 }] } }
-  }
+  },
+  test11: {
+    response: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    mapping: {
+      second_item: "[root][1].id"
+    },
+    expected: { second_item: 2 }
+  },
+  test12: {
+    response: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    mapping: {
+      second_item: "['root'][1].id"
+    },
+    expected: { second_item: 2 }
+  },
 };

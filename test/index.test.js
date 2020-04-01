@@ -69,4 +69,6 @@ describe(`@TJA tests`, function() {
       host: { name: "postman-echo.com" }
     });
   });
+  it("@test11 - transform mapping starts with brackets ([)", () => fetchTestSet("test11"));
+  it("@test12 - transform mapping with strings (')", () => fetchTestSet("test12"));
 });
