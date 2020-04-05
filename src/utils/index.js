@@ -1,68 +1,115 @@
-const operate = (root, { __operation, args }) => {
-  switch (__operation) {
-    case "array_transform":
-      const { path, mapping } = args;
-      const origin = this.getPath({ root }, path);
-      if (origin === null)
-        throw new Error(
-          "Transfrom Error: array_transform path doesn'nt exist."
-        );
-      if (!Array.isArray(origin))
-        throw new Error("Transfrom Error: array_transform path not an Array.");
-      return origin.map(item => this.transform(item, mapping));
+require('array-flat-polyfill');
 
-    default:
-      throw new Error("Transfrom Error: unsupported operation: " + __operation);
+const toJson = mapping => {
+  try {
+    return JSON.parse(mapping);
+  } catch (e) {
+    return mapping;
   }
 };
 
-module.exports.getPath = (obj, path) => {
-  let varsPath = path.split(".");
-  let currval = obj;
-  if (
-    varsPath.some(varsPathItem => {
-      const arrMatch = varsPathItem.match(/^([^\[|^\]]*)\[([^\]]+)\]$/);
-      if (!arrMatch) currval = currval[varsPathItem];
-      else {
-        const idx = parseInt(arrMatch[2]);
-        if (!isNaN(idx)) currval = currval[arrMatch[1]][idx];
-        else {
-          currval = currval[arrMatch[1]].map(el => {
-            return getPath(arrMatch[2], el);
-          });
-        }
-      }
-      return !currval;
+const operators = {
+  find: (arr, path, value) => arr.find(root => this.transform(root, path) === value),
+  filter: (arr, path, value) => arr.filter(root => this.transform(root, path) === value),
+  map: (arr, path) => arr.map(root => this.transform(root, path)),
+  flat: (arr) => arr.flat()
+};
+
+const operatorsRegexp = new RegExp(`^(${Object.keys(operators).join('|')})\\((.*)\\)$`);
+const openersRegexp = new RegExp(['[', '.'].map(opener => '\\' + opener).join('|'));
+
+const getOperatorsArg = key => {
+  const match = key.match(operatorsRegexp);
+
+  if (!match) return {};
+
+  const [, name, argsStr] = match;
+
+  const args = argsStr.split(/,(?![^(]*\))/g)
+    .map(item => {
+      item = item.trim();
+
+      if(!item.startsWith("'")) return toJson(item);
+
+      return item.replace(/^'|'$/g, '')
     })
-  )
-    return null;
-  return currval;
+    .filter(Boolean);
+
+  return {name, args};
+};
+
+const getBracketsArg = path => {
+  const brackets = {'[': 0};
+
+  let arg = '';
+  brackets[path[0]]++;
+  [...path.substring(1)].some(char => {
+    if (char in brackets) brackets[char]++;
+    if (char === ']') brackets['[']--;
+    if (brackets['['] === 0) return true;
+    arg += char;
+    return false;
+  });
+
+  return arg;
+};
+
+module.exports.getPath = (root, path) => {
+  path = (path || '').trim();
+
+  // remove leading dot (.) in case dot after closing bracket e.g. ['root'].value
+  path = path.startsWith('.') ? path.substring(1).trim() : path;
+
+  if (!path.trim()) return root;
+
+  const match = path.match(openersRegexp);
+
+  if (!match) return root[path];
+
+  const {0: delimiter, index: pos} = match;
+
+  let nextPath;
+  let key;
+
+  switch (delimiter) {
+    case '.':
+      key = path.substring(0, pos);
+      nextPath = path.substring(key.length + 1);
+      return this.getPath(root[key], nextPath);
+    case '[':
+      if (pos > 0) {
+        key = path.substring(0, pos);
+        nextPath = path.substring(key.length);
+        return this.getPath(root[key], nextPath);
+      }
+
+      key = getBracketsArg(path);
+      nextPath = path.substring(key.length + 2);
+
+      key = key.trim().replace(/^'|'$/g, '');
+
+      const {name, args} = getOperatorsArg(key);
+      if (!name) return this.getPath(root[key], nextPath);
+
+      const nextRoot = operators[name](root, ...args);
+      return this.getPath(nextRoot, nextPath);
+  }
 };
 
 module.exports.transform = (root, mapping) => {
-  const transformed = {};
-  Object.keys(mapping).forEach(key => {
-    const value = mapping[key];
-    switch (typeof value) {
-      case "object":
-        if (!value.__operation)
-          return Object.assign(transformed, {
-            [key]: this.transform(root, value)
-          });
-        return Object.assign(transformed, { [key]: operate(root, value) });
-      case "string":
-        return Object.assign(transformed, {
-          [key]: this.getPath({ root }, value)
-        });
+  let transformed = {};
 
-      default:
-        return new Error(
-          "Transform Error: unsupported value type: " +
-            value +
-            ", for key: " +
-            key
-        );
-    }
+  if (typeof mapping === 'string') {
+    return this.getPath({root}, mapping);
+  }
+
+  Object.keys(mapping).forEach(key => {
+    let value = mapping[key];
+
+    return Object.assign(transformed, {
+      [key]: typeof value === 'object' ? this.transform(root, value) : this.getPath({root}, value)
+    });
   });
+
   return transformed;
 };

@@ -1,12 +1,22 @@
 const fetch = require("./utils/fetch");
-const { getPath, transform } = require("./utils");
+const {format, parameters} = require('./utils/string-template');
+const {getPath, transform} = require("./utils");
 
-module.exports = class JAT {
+module.exports = class TJA {
   static async fetch(url, options, mapping, baseMapping) {
     const response = await fetch(url, options);
+
     const root = baseMapping
-      ? getPath({ root: response }, baseMapping)
+      ? getPath({root: response}, baseMapping)
       : response;
     return transform(root, mapping);
+  }
+
+  static format(input, ...args) {
+    return format(input, ...args);
+  }
+
+  static parameters(...inputs) {
+    return parameters(...inputs);
   }
 };

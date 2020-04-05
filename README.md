@@ -17,7 +17,6 @@ npm i transform-json-api
 
 ### mapping object
 This object holds the configurations to tranform the API response to the desired object.
-Currently only mapping for top level keys is supported.
 
 1. Keys: String. represents a key name in the tranformed result. Currently dynamic key names are not supported.
 2. Values, One of two options: 
@@ -28,13 +27,10 @@ Currently only mapping for top level keys is supported.
 This object represent a predefined complex operation of mapping.
 It's structure:
 ```
-{
-  __operation: "operation name",
-  args: {...}
-}
+[operation(args)]
 ```
 
-* `__operation` - The name of the operation
+* `operation` - The name of the operation
 * `args` - Required argument for the operation
 
 See also: [Supported mapping operations](mapping-operations.md)
@@ -52,12 +48,12 @@ Supported syntax:
 Suppose API `POST https://example.com/echo` responsds with the provided JSON body.
 So this code:
 ```
-const JsonAPIHandler = require('json-api-handler');
+const TransformJsonAPI = require('transform-json-api');
 
 const url = "https://example.com/echo";
 const options = {
   method: "POST",
-  body: JSON.stringify({
+  body: {
     data: {
       test: true,
       items: [
@@ -65,23 +61,47 @@ const options = {
         {index: 2, name: "item 2"}
       ]
     }
-  })
-}
-const mapping = {
-  item_names: {
-    __operation: "array_transform",
-    args: "root.name"
   }
 }
-
-const transorm = JsonAPIHandler.fetch(url, options, mapping, "root.data.items")
-```
-Should store in `transform` the following object:
-```
-{
-  item-names: [ "item 1", "item 2" ]
+const mapping = {
+    "item_names": "root[map(root.name)]",
 }
+
+const transorm = TransformJsonAPI.fetch(url, options, mapping, "root.data.items")
+// transorm ->  ["item 1", "item 2"]
 ```
 
+## format()
+### `format(input:string|object, [output:string|object])`
+   A simple string template function based on named or indexed arguments
+   base on this [`string-template`](#https://www.npmjs.com/package/string-template) package
+   
+   ```
+   const greeting = format("Hello {name}, you have {count} unread messages", {
+       name: "Robert",
+       count: 12
+   })
+   // greeting -> "Hello Robert, you have 12 unread messages"
+   ```
+   Excepts Objects as well 
+ 
+## parameters()
+### `parameters([input:string|object])`
+returns keys from a string template
+   
+   ```javascript
+   const keys = parameters("Hello {name}, you have {count} unread messages");
+   // keys -> ["name", "count"]
+   ```
+   Alternative with multiple arguments and not just with strings
+   ```javascript
+   const greeting = "Hello {name}, you have {count} unread messages";
+   const publishedAt = {"package_{id}": "Published at: {date}"};
+   
+   const [greetingKeys, publishedAtKeys] = parameters(greeting, publishedAt);
+   
+   // greetingKeys -> ["name", "count"]
+   // publishedAtKeys -> ["id", "date"]
+   ```
 # License
 This package is licensed under the MIT license.

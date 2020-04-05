@@ -1,6 +1,6 @@
 const rewire = require("rewire");
-const JAT = rewire("../src");
-const originalJAT = require("../src");
+const TJA = rewire("../src");
+const originalTJA = require("../src");
 const testSets = require("./testSets");
 
 const chai = require("chai");
@@ -8,7 +8,7 @@ const expect = chai.expect;
 
 const fetchTestSet = async name => {
   const { response: body, mapping, baseMapping, expected } = testSets[name];
-  const transform = await JAT.fetch(
+  const transform = await TJA.fetch(
     "https://example.com",
     { body },
     mapping,
@@ -19,11 +19,11 @@ const fetchTestSet = async name => {
 
 const rewiredFetch = async (_, { body }) => body;
 
-describe(`@JAT tests`, function() {
+describe(`@TJA tests`, function() {
   let revert;
   this.timeout(10000);
   before(() => {
-    revert = JAT.__set__("fetch", rewiredFetch);
+    revert = TJA.__set__("fetch", rewiredFetch);
   });
 
   it("@test1 - transform scalars", () => fetchTestSet("test1"));
@@ -31,11 +31,11 @@ describe(`@JAT tests`, function() {
   it("@test3 - transform an array response", () => fetchTestSet("test3"));
   it("@test4 - mapping of an array", () => fetchTestSet("test4"));
   it("@test5 - mapping of an object", () => fetchTestSet("test5"));
-  it("@test6 - mapping with array_trasform", () => fetchTestSet("test6"));
+  it("@test6 - mapping with map", () => fetchTestSet("test6"));
   it("@test7 - 2-layered mapping", () => fetchTestSet("test7"));
-  it("@test8 - 2-layered array_transform", () => fetchTestSet("test8"));
+  it("@test8 - 2-layered map", () => fetchTestSet("test8"));
   it("@test9 - real fetch (GET)", async () => {
-    const res = await originalJAT.fetch(
+    const res = await originalTJA.fetch(
       "https://postman-echo.com/get?foo1=bar1&foo2=bar2",
       {},
       {
@@ -51,7 +51,7 @@ describe(`@JAT tests`, function() {
     });
   });
   it("@test10 - real fetch (POST)", async () => {
-    const res = await originalJAT.fetch(
+    const res = await originalTJA.fetch(
       "https://postman-echo.com/post?foo1=bar1&foo2=bar2",
       {
         method: "POST",
@@ -69,4 +69,11 @@ describe(`@JAT tests`, function() {
       host: { name: "postman-echo.com" }
     });
   });
+  it("@test11 - transform mapping starts with brackets ([)", () => fetchTestSet("test11"));
+  it("@test12 - transform with keys as a strings (')", () => fetchTestSet("test12"));
+  it("@test13 - transform with spaces between keys", () => fetchTestSet("test13"));
+  it("@test14 - transform with spaces in keys", () => fetchTestSet("test14"));
+  it("@test15 - transform with quote in keys", () => fetchTestSet("test15"));
+  it("@test16 - transform nested path with operators", () => fetchTestSet("test16"));
+  it("@test17 - transform nested path with multiple args ", () => fetchTestSet("test17"));
 });
