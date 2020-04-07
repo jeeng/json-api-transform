@@ -115,6 +115,17 @@ module.exports = {
     expected: {a: [{items: [1]}, {items: [2]}, {items: [3]}]}
   },
   test17: {
+    response: [
+      { title: 'title1', body: 'body1' },
+      { title: 'title2', body: 'body2' }
+    ],
+    mapping: `root[map({"koteret":"root.title", "guf":"root.body"})]`,
+    expected: [
+      {koteret: 'title1', guf: 'body1'},
+      {koteret: 'title2', guf: 'body2'}
+    ]
+  },
+  test18: {
     response: [[{visible: true, id: 1}, {visible: false, id: 2}, {visible: true, id: 3}]],
     mapping: {a: `root[map({"items":"root[filter(root.visible, true)]"})]`},
     expected: {a: [{items: [{visible: true, id: 1}, {visible: true, id: 3}]}]}

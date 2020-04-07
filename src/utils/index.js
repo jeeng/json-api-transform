@@ -25,6 +25,10 @@ const getOperatorsArg = key => {
 
   const [, name, argsStr] = match;
 
+  const argJson = toJson(argsStr);
+
+  if(typeof argJson === 'object') return {name, args: [argJson]};
+
   const args = argsStr.split(/,(?![^(]*\))/g)
     .map(item => {
       item = item.trim();
