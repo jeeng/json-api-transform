@@ -23,7 +23,7 @@ This object holds the configurations to tranform the API response to the desired
   1. String. hold the [path](#path) to the desired value in the API response.
   2. Object. A [mapping operation](#mapping-operation) for array items.
 
-#### mapping operation
+#### mapping operations
 This object represent a predefined complex operation of mapping.
 It's structure:
 ```
