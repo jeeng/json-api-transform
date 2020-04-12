@@ -38,7 +38,14 @@ module.exports = (url, options = {}) => {
       .request(opts, resp => {
         let data = "";
         resp.on("data", chunk => (data += chunk));
-        resp.on("end", () => resolve(JSON.parse(data)));
+        resp.on("end", () => {
+          try {
+            resolve(JSON.parse(data))
+          }
+          catch(e) {
+            reject(e);
+          }
+        });
       })
       .on("error", err => reject(err));
 
