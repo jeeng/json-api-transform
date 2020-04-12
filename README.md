@@ -26,8 +26,6 @@ This object holds the configurations to tranform the API response to the desired
 #### mapping operations
 This object represent a predefined complex operation of mapping.
 It's structure:
-
-Currently, support only one JSON parameter at the time.
 ```
 [operation(args)]
 ```

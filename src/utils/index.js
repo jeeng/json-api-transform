@@ -8,6 +8,38 @@ const toJson = mapping => {
   }
 };
 
+const splitToArgs = str => {
+  const brackets = {
+    "(": 0,
+    "[": 0,
+    "{": 0
+  };
+
+  let pos = 0;
+  const args = [];
+
+  [...str].forEach((char, i) => {
+    if (char in brackets) brackets[char]++;
+
+    else if (char === ")") brackets["("]--;
+    else if (char === "]") brackets["["]--;
+    else if (char === "}") brackets["{"]--;
+
+    else if (brackets["("] + brackets["["] + brackets["{"] !== 0) return null;
+
+    else if (char === ",") {
+      args.push(str.substring(pos, i));
+      pos = i + 1;
+    }
+  });
+
+  args.push(str.substring(pos));
+
+  return args
+    .map(arg => arg.trim())
+    .filter(Boolean);
+};
+
 const operators = {
   find: (arr, path, value) => arr.find(root => this.transform(root, path) === value),
   filter: (arr, path, value) => arr.filter(root => this.transform(root, path) === value),
@@ -25,25 +57,21 @@ const getOperatorsArg = key => {
 
   const [, name, argsStr] = match;
 
-  const argJson = toJson(argsStr);
-
-  if(typeof argJson === 'object') return {name, args: [argJson]};
-
-  const args = argsStr.split(/,(?![^(]*\))/g)
+  const args = splitToArgs(argsStr)
     .map(item => {
       item = item.trim();
 
-      if(!item.startsWith("'")) return toJson(item);
+      if (!item.startsWith("'")) return toJson(item);
 
       return item.replace(/^'|'$/g, '')
     })
     .filter(Boolean);
 
-  return {name, args};
+  return { name, args };
 };
 
 const getBracketsArg = path => {
-  const brackets = {'[': 0};
+  const brackets = { '[': 0 };
 
   let arg = '';
   brackets[path[0]]++;
@@ -70,7 +98,7 @@ module.exports.getPath = (root, path) => {
 
   if (!match) return root[path];
 
-  const {0: delimiter, index: pos} = match;
+  const { 0: delimiter, index: pos } = match;
 
   let nextPath;
   let key;
@@ -92,7 +120,7 @@ module.exports.getPath = (root, path) => {
 
       key = key.trim().replace(/^'|'$/g, '');
 
-      const {name, args} = getOperatorsArg(key);
+      const { name, args } = getOperatorsArg(key);
       if (!name) return this.getPath(root[key], nextPath);
 
       const nextRoot = operators[name](root, ...args);
@@ -104,14 +132,14 @@ module.exports.transform = (root, mapping) => {
   let transformed = {};
 
   if (typeof mapping === 'string') {
-    return this.getPath({root}, mapping);
+    return this.getPath({ root }, mapping);
   }
 
   Object.keys(mapping).forEach(key => {
     let value = mapping[key];
 
     return Object.assign(transformed, {
-      [key]: typeof value === 'object' ? this.transform(root, value) : this.getPath({root}, value)
+      [key]: typeof value === 'object' ? this.transform(root, value) : this.getPath({ root }, value)
     });
   });
 
