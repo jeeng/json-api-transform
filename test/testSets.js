@@ -129,5 +129,34 @@ module.exports = {
     response: [[{visible: true, id: 1}, {visible: false, id: 2}, {visible: true, id: 3}]],
     mapping: {a: `root[map({"items":"root[filter(root.visible, true)]"})]`},
     expected: {a: [{items: [{visible: true, id: 1}, {visible: true, id: 3}]}]}
+  },
+  test19: {
+    response: {
+      "items": [
+        {
+          "title": "title3",
+          "body": "body3",
+          "cpc": "2.10",
+          "url": "https://api.nostromedia.com/click?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "image": "https://api.nostromedia.com/imp?token=CwiZXhwIjoxNTg2NzY5OTk4fQ.Glp2rpJDFZhyHtX5anlDGFpeop1lt3115NHVqTrIOQM"
+        },
+        {
+          "title": "title3",
+          "body": "body3",
+          "cpc": "1.80",
+          "url": "https://api.nostromedia.com/click?token=eyJhZElkIjoiYjcwODA5OWQtNjk5MS01MThmLWJlMDctNTRmYTM3ODQ3MGFkIiwidXJsIjoi",
+          "image": "http://api.nostromedia.com/imp?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9OiJIUzI1NiIsInR"
+        },
+        {
+          "title": "title2",
+          "body": "body2",
+          "cpc": "1.50",
+          "url": "https://api.nostromedia.com/click?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZElk",
+          "image": "https://api.nostromedia.com/imp?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZElkIjoiMjJhZDk1MDUtO"
+        }
+      ]
+    },
+    mapping: {a: `root[map({"items":"root[filter(root.visible, true)]"})]`},
+    expected: {a: [{items: [{visible: true, id: 1}, {visible: true, id: 3}]}]}
   }
 };

@@ -77,4 +77,5 @@ describe(`@TJA tests`, function() {
   it("@test16 - transform nested path with operators", () => fetchTestSet("test16"));
   it("@test17 - transform nested path with object argument", () => fetchTestSet("test17"));
   it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test18"));
+  it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test19"));
 });
