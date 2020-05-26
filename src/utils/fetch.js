@@ -1,6 +1,7 @@
 const { URL } = require("url");
 const clients = { "http:": require("http"), "https:": require("https") };
 const defaults = require('./defaults');
+const {ConnectionError, JsonParseError} = require("./errors");
 
 module.exports = (url, options = {}) => {
   const u = new URL(url);
@@ -43,11 +44,11 @@ module.exports = (url, options = {}) => {
             resolve(JSON.parse(data))
           }
           catch(e) {
-            reject(e);
+            reject(new JsonParseError(data.substring(0, 100)));
           }
         });
       })
-      .on("error", err => reject(err));
+      .on("error", err => reject(new ConnectionError(err)));
 
       req.setTimeout(opts.timeout, req.abort);
 

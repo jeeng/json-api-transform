@@ -78,4 +78,26 @@ describe(`@TJA tests`, function() {
   it("@test17 - transform nested path with object argument", () => fetchTestSet("test17"));
   it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test18"));
   it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test19"));
+
+  it("@test19 - return bad JSON input", async () => {
+    // https://postman-echo.com/time/format?timestamp=20&&&16-10-10&format123mm
+    const res = await originalTJA.fetch(
+      "https://postman-echo.com/time/format?timestamp=20&&&16-10-10&format123mm",
+      {  },
+      {}
+    ).catch(e => {
+      expect(e.message).to.equal("Bad JSON input");
+    });
+  });
+
+  it("@test20 - return socket error", async () => {
+    // https://postman-echo.com/time/format?timestamp=20&&&16-10-10&format123mm
+    const res = await originalTJA.fetch(
+      "https://postman-echo.com/time/format?timestamp=20&&&16-10-10&format123mm",
+      { timeout: 10 },
+      {}
+    ).catch(e => {
+      expect(e.message).to.equal("Error: socket hang up");
+    });
+  });
 });
