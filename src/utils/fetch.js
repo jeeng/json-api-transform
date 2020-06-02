@@ -1,6 +1,7 @@
 const { URL } = require("url");
 const clients = { "http:": require("http"), "https:": require("https") };
 const defaults = require('./defaults');
+var querystring = require('querystring');
 
 module.exports = (url, options = {}) => {
   const u = new URL(url);
@@ -31,7 +32,7 @@ module.exports = (url, options = {}) => {
     options
   );
   opts.headers = opts.headers || {};
-  opts.headers["Content-Type"] = "application/json";
+  opts.headers["Content-Type"] = opts.headers["Content-Type"] || "application/json";
 
   return new Promise((resolve, reject) => {
     const req = client
@@ -49,9 +50,15 @@ module.exports = (url, options = {}) => {
       })
       .on("error", err => reject(err));
 
-      req.setTimeout(opts.timeout, req.abort);
+    req.setTimeout(opts.timeout, req.abort);
 
-    if (body) req.write(JSON.stringify(body));
+    if (body) {
+      if (opts.headers["Content-Type"] === "application/x-www-form-urlencoded")  {
+        req.write(querystring.stringify(body));
+      } else {
+        req.write(JSON.stringify(body));
+      }
+    }
     req.end();
   });
 };
