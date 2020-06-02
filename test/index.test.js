@@ -78,4 +78,25 @@ describe(`@TJA tests`, function() {
   it("@test17 - transform nested path with object argument", () => fetchTestSet("test17"));
   it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test18"));
   it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test19"));
+
+  it("@test21 - form data real fetch", async () => {
+    const res = await originalTJA.fetch(
+      "https://postman-echo.com/post?foo1=bar1&foo2=bar2",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: {
+          foo1: "bar1"
+        }
+      },
+      {
+        test: "root.form.foo1",
+      }
+    );
+    expect(res).to.deep.equal({
+      test: "bar1",
+    });
+  });
 });
