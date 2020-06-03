@@ -82,10 +82,24 @@ describe(`@TJA tests`, function () {
   it("@test19 - return socket error", async () => {
     await originalTJA.fetch(
       "https://postman-echo.com/time/format?timestamp=20&&&16-10-10&format123mm",
-      {timeout: 10},
+      {timeout: 1},
       {}
     ).catch(e => {
       expect(e.message).to.equal("Error: socket hang up");
+      return true;
+    })
+      .then(r => {
+        expect(r).to.be.true
+      });
+  });
+
+  it("@test20 - return socket error", async () => {
+    await originalTJA.fetch(
+      "http://google.com",
+      {},
+      {}
+    ).catch(e => {
+      expect(e.message).to.equal("Bad JSON input");
       return true;
     })
       .then(r => {
