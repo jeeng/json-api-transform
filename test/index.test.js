@@ -106,4 +106,25 @@ describe(`@TJA tests`, function () {
         expect(r).to.be.true
       });
   });
+
+  it("@test21 - form data real fetch", async () => {
+    const res = await originalTJA.fetch(
+      "https://postman-echo.com/post?foo1=bar1&foo2=bar2",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: {
+          foo1: "bar1"
+        }
+      },
+      {
+        test: "root.form.foo1",
+      }
+    );
+    expect(res).to.deep.equal({
+      test: "bar1",
+    });
+  });
 });
