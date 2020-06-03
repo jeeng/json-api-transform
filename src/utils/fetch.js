@@ -1,7 +1,8 @@
 const { URL } = require("url");
 const clients = { "http:": require("http"), "https:": require("https") };
 const defaults = require('./defaults');
-var querystring = require('querystring');
+const {ConnectionError, JsonParseError} = require("./errors");
+const querystring = require("querystring");
 
 module.exports = (url, options = {}) => {
   const u = new URL(url);
@@ -44,13 +45,13 @@ module.exports = (url, options = {}) => {
             resolve(JSON.parse(data))
           }
           catch(e) {
-            reject(e);
+            reject(new JsonParseError(data.substring(0, 100)));
           }
         });
       })
-      .on("error", err => reject(err));
+      .on("error", err => reject(new ConnectionError(err)));
 
-    req.setTimeout(opts.timeout, req.abort);
+      req.setTimeout(opts.timeout, req.abort);
 
     if (body) {
       if (opts.headers["Content-Type"] === "application/x-www-form-urlencoded")  {

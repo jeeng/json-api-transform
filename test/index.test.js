@@ -7,19 +7,20 @@ const chai = require("chai");
 const expect = chai.expect;
 
 const fetchTestSet = async name => {
-  const { response: body, mapping, baseMapping, expected } = testSets[name];
+  const {response: body, mapping, baseMapping, expected} = testSets[name];
   const transform = await TJA.fetch(
     "https://example.com",
-    { body },
+    {body},
     mapping,
     baseMapping
   );
+
   expect(transform).to.deep.equal(expected);
 };
 
-const rewiredFetch = async (_, { body }) => body;
+const rewiredFetch = async (_, {body}) => body;
 
-describe(`@TJA tests`, function() {
+describe(`@TJA tests`, function () {
   let revert;
   this.timeout(10000);
   before(() => {
@@ -41,13 +42,13 @@ describe(`@TJA tests`, function() {
       {
         foo1: "root.args.foo1",
         foo2: "root.args.foo2",
-        host: { name: "root.headers.host" }
+        host: {name: "root.headers.host"}
       }
     );
     expect(res).to.deep.equal({
       foo1: "bar1",
       foo2: "bar2",
-      host: { name: "postman-echo.com" }
+      host: {name: "postman-echo.com"}
     });
   });
   it("@test10 - real fetch (POST)", async () => {
@@ -55,18 +56,18 @@ describe(`@TJA tests`, function() {
       "https://postman-echo.com/post?foo1=bar1&foo2=bar2",
       {
         method: "POST",
-        body: { foo1: "bar1", foo2: "bar2" }
+        body: {foo1: "bar1", foo2: "bar2"}
       },
       {
         foo1: "root.args.foo1",
         foo2: "root.args.foo2",
-        host: { name: "root.headers.host" }
+        host: {name: "root.headers.host"}
       }
     );
     expect(res).to.deep.equal({
       foo1: "bar1",
       foo2: "bar2",
-      host: { name: "postman-echo.com" }
+      host: {name: "postman-echo.com"}
     });
   });
   it("@test11 - transform mapping starts with brackets ([)", () => fetchTestSet("test11"));
@@ -77,7 +78,34 @@ describe(`@TJA tests`, function() {
   it("@test16 - transform nested path with operators", () => fetchTestSet("test16"));
   it("@test17 - transform nested path with object argument", () => fetchTestSet("test17"));
   it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test18"));
-  it("@test18 - transform nested path with multiple args ", () => fetchTestSet("test19"));
+
+  it("@test19 - return socket error", async () => {
+    await originalTJA.fetch(
+      "https://postman-echo.com/time/format?timestamp=20&&&16-10-10&format123mm",
+      {timeout: 1},
+      {}
+    ).catch(e => {
+      expect(e.message).to.equal("Error: socket hang up");
+      return true;
+    })
+      .then(r => {
+        expect(r).to.be.true
+      });
+  });
+
+  it("@test20 - return socket error", async () => {
+    await originalTJA.fetch(
+      "http://google.com",
+      {},
+      {}
+    ).catch(e => {
+      expect(e.message).to.equal("Bad JSON input");
+      return true;
+    })
+      .then(r => {
+        expect(r).to.be.true
+      });
+  });
 
   it("@test21 - form data real fetch", async () => {
     const res = await originalTJA.fetch(
