@@ -3,6 +3,8 @@ module.exports.fetchOptions = {
 };
 
 module.exports.agentOptions = {
-  maxSockets: Infinity,
-  keepAlive: false
+  maxSockets: 1000,
+  maxFreeSockets: 10,
+  timeout: 1000,
+  freeSocketTimeout: 30000,
 };
