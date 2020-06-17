@@ -1,12 +1,16 @@
 const Agents = { http: require("agentkeepalive"), https: require("agentkeepalive").HttpsAgent};
 const {agentOptions} = require("./defaults");
 
-agents = null;
-module.exports.getStatistics = () => {
-  return agents.map((agent, protocol) => ({ protocol, stats: agent.getCurrentStatus() }))
+let agents = {
+  "http:": new Agents.http(Object.assign(agentOptions, {})),
+  "https:": new Agents.https(Object.assign(agentOptions, {}))
 };
 
-module.exports.createAgents = (opts) => {
+module.exports.getStatistics = () => {
+  return Object.keys(agents).map((protocol) => ({ protocol, stats: agents[protocol].getCurrentStatus() }))
+};
+
+module.exports.setAgents = (opts) => {
   agents = {
     "http:": new Agents.http(Object.assign(agentOptions, opts || {})),
     "https:": new Agents.https(Object.assign(agentOptions, opts || {}))
@@ -14,6 +18,5 @@ module.exports.createAgents = (opts) => {
 };
 
 module.exports.getAgent = (protocol) => {
-  if ( ! agents) this.createAgents({});
   return agents[protocol];
 }

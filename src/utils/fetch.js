@@ -30,7 +30,6 @@ module.exports = (url, options = {}) => {
     options
   );
 
-
   opts.headers = opts.headers || {};
   opts.headers["Content-Type"] = opts.headers["Content-Type"] || "application/json";
 
@@ -44,13 +43,11 @@ module.exports = (url, options = {}) => {
             resolve(JSON.parse(data))
           }
           catch(e) {
-            reject(new JsonParseError(data));
+            reject(new JsonParseError(data, resp.statusCode, resp.headers));
           }
         });
       })
       .on("error", err => reject(new ConnectionError(err)));
-
-      req.setTimeout(opts.timeout, req.abort);
 
     if (body) {
       if (opts.headers["Content-Type"] === "application/x-www-form-urlencoded")  {
@@ -59,6 +56,7 @@ module.exports = (url, options = {}) => {
         req.write(JSON.stringify(body));
       }
     }
+
     req.end();
   });
 };

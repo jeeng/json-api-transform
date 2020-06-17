@@ -1,6 +1,7 @@
 const rewire = require("rewire");
 const TJA = rewire("../src");
 const originalTJA = require("../src");
+const {setAgents} = require("../src/utils/agents");
 const testSets = require("./testSets");
 
 const chai = require("chai");
@@ -82,15 +83,15 @@ describe(`@TJA tests`, function () {
   it("@test19 - return socket error", async () => {
     await originalTJA.fetch(
       "https://postman-echo.com/time/format?213123",
-      { timeout: 1 },
+      {timeout: 1},
       {}
     ).catch(e => {
       expect(e.message).to.equal("Error: Socket timeout");
       return true;
     })
-    .then(r => {
-      expect(r).to.be.true
-    });
+      .then(r => {
+        expect(r).to.be.true
+      });
   });
 
   it("@test20 - return socket error", async () => {
@@ -100,6 +101,10 @@ describe(`@TJA tests`, function () {
       {}
     ).catch(e => {
       expect(e.message).to.equal("Bad JSON input");
+      expect(e.statusCode).to.equal(301);
+      expect(e.headers).to.exist;
+      expect(e.headers["content-type"]).to.equal("text/html; charset=UTF-8");
+
       return true;
     })
       .then(r => {
@@ -126,5 +131,29 @@ describe(`@TJA tests`, function () {
     expect(res).to.deep.equal({
       test: "bar1",
     });
+  });
+
+  it("@test22 - show statistics", async () => {
+    setAgents({});
+    Array(10).fill().map(() => {
+      originalTJA.fetch(
+        "https://postman-echo.com/post?foo1=bar1&foo2=bar2",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: {
+            foo1: "bar1"
+          }
+        },
+        {
+          test: "root.form.foo1",
+        }
+      );
+    });
+
+    const stats = originalTJA.getStatistics();
+    expect(stats[1].stats.createSocketCount).to.equal(10);
   });
 });
