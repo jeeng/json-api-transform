@@ -1,6 +1,5 @@
 const { URL } = require("url");
 const clients = { "http:": require("http"), "https:": require("https") };
-const defaults = require('./defaults');
 const {ConnectionError, JsonParseError} = require("./errors");
 const querystring = require("querystring");
 const {getAgent} = require("./agents");
@@ -11,7 +10,7 @@ module.exports = (url, options = {}) => {
   const client = clients[protocol];
   const agent = getAgent(protocol);
 
-  if (!client)
+  if (!client && ! agent)
     throw new Error("TJA fetch error: Unsupported protocol " + protocol);
 
   const { hostname, port, pathname, search, hash } = u;
@@ -27,7 +26,6 @@ module.exports = (url, options = {}) => {
 
   const opts = Object.assign(
     { agent },
-    defaults.fetchOptions,
     urlOptions,
     options
   );
@@ -46,7 +44,7 @@ module.exports = (url, options = {}) => {
             resolve(JSON.parse(data))
           }
           catch(e) {
-            reject(new JsonParseError(data.substring(0, 100)));
+            reject(new JsonParseError(data.substring(0, 100), resp.headers, resp.statusCode));
           }
         });
       })

@@ -4,6 +4,7 @@ const {getPath, transform} = require("./utils");
 const {setAgentOptions, setLogger} = require("./utils/agents");
 
 module.exports = class TJA {
+
   static async fetch(url, options, mapping, baseMapping) {
     const response = await fetch(url, options);
 

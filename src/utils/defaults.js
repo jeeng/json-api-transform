@@ -1,10 +1,6 @@
-module.exports.fetchOptions = {
-  timeout: parseInt(process.env.TJA_FETCH_TIMEOUT) || 10000,
-};
-
 module.exports.agentOptions = {
-  maxSockets: 1000,
-  maxFreeSockets: 10,
-  timeout: 1000,
+  maxSockets: 5000,
+  maxFreeSockets: 500,
+  timeout: 60000,
   freeSocketTimeout: 30000,
 };
