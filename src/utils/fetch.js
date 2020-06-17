@@ -44,11 +44,13 @@ module.exports = (url, options = {}) => {
             resolve(JSON.parse(data))
           }
           catch(e) {
-            reject(new JsonParseError(data.substring(0, 100), resp.headers, resp.statusCode));
+            reject(new JsonParseError(data));
           }
         });
       })
       .on("error", err => reject(new ConnectionError(err)));
+
+      req.setTimeout(opts.timeout, req.abort);
 
     if (body) {
       if (opts.headers["Content-Type"] === "application/x-www-form-urlencoded")  {

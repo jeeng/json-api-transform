@@ -8,6 +8,8 @@ module.exports = class TJA {
   static async fetch(url, options, mapping, baseMapping) {
     const response = await fetch(url, options);
 
+    if(!mapping) return response;
+
     const root = baseMapping
       ? getPath({root: response}, baseMapping)
       : response;
