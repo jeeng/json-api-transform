@@ -45,7 +45,7 @@ module.exports = (url, options = {}) => {
             resolve(JSON.parse(data))
           }
           catch(e) {
-            reject(new JsonParseError(data.substring(0, 100)));
+            reject(new JsonParseError(data));
           }
         });
       })
