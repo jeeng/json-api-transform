@@ -1,12 +1,16 @@
 const fetch = require("./utils/fetch");
 const {format, parameters} = require('./utils/string-template');
 const {getPath, transform} = require("./utils");
-const {getStatistics} = require("./utils/agents");
+const {getStatistics, setAgentOptions} = require("./utils/agents");
 
 module.exports = class TJA {
 
   static getStatistics() {
     return getStatistics();
+  }
+
+  static setAgentOptions(opts) {
+    return setAgentOptions(opts);
   }
 
   static async fetch(url, options, mapping, baseMapping) {
