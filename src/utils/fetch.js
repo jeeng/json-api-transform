@@ -60,31 +60,3 @@ module.exports = (url, options = {}) => {
     req.end();
   });
 };
-
-// {"items": "root.items[map({\"device_type\":\"root.platform.id\", \"country\":\"root.country.id\", \"impressions\":\"root.paidReqs.value\", \"clicks\": \"root.paidClicks.value\", \"revenue\": \"root.revenue.value\", \"ad_unit_id\": \"root.section.value\"})]"}
-
-
-var test = async () => {
-  const a = async () => {
-    let b;
-    try {
-      b = new Promise((res, reject) => {
-        setTimeout(() => {
-          reject("error")
-        }, 500);
-      });
-
-    }
-    catch(e) {
-      console.log("Cought!");
-      await new Promise((res) => {
-        setTimeout(res, 2000);
-      })
-    }
-
-    return b;
-  };
-
-  await a();
-  console.log("Done!");
-};
