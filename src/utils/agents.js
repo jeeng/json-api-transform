@@ -10,7 +10,7 @@ module.exports.getStatistics = () => {
   return Object.keys(agents).map((protocol) => ({ protocol, stats: agents[protocol].getCurrentStatus() }))
 };
 
-module.exports.setAgents = (opts) => {
+module.exports.setAgentOptions = (opts) => {
   agents = {
     "http:": new Agents.http(Object.assign(agentOptions, opts || {})),
     "https:": new Agents.https(Object.assign(agentOptions, opts || {}))

@@ -1,7 +1,7 @@
 const rewire = require("rewire");
 const TJA = rewire("../src");
 const originalTJA = require("../src");
-const {setAgents} = require("../src/utils/agents");
+const {setAgentOptions} = require("../src/utils/agents");
 const testSets = require("./testSets");
 
 const chai = require("chai");
@@ -134,7 +134,7 @@ describe(`@TJA tests`, function () {
   });
 
   it("@test22 - show statistics", async () => {
-    setAgents({});
+    setAgentOptions({});
     Array(10).fill().map(() => {
       originalTJA.fetch(
         "https://postman-echo.com/post?foo1=bar1&foo2=bar2",
