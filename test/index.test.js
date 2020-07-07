@@ -156,4 +156,32 @@ describe(`@TJA tests`, function () {
     const stats = originalTJA.getStatistics();
     expect(stats[1].stats.createSocketCount).to.equal(10);
   });
+
+  it("@test23 - parse CSV response to JSON", async () => {
+    setAgentOptions({});
+    const response = await originalTJA.fetch(
+      "http://samplecsvs.s3.amazonaws.com/SalesJan2009.csv",
+      {
+        responseFormat: "csv",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: {
+          foo1: "bar1"
+        }
+      },
+      {
+        items: "root[map({\"test\": \"root.Product\", \"price\": \"root.Price\"})]",
+      }
+    );
+
+    expect(response.items).to.be.an('array')
+    expect(response.items.length).to.at.least(3);
+
+    response.items.map(item => {
+      expect(item).to.contain.keys(["test", "price"]);
+      expect(parseInt(item.price)).to.be.an('number');
+    })
+  });
 });

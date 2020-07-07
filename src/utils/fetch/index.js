@@ -1,8 +1,9 @@
 const { URL } = require("url");
 const clients = { "http:": require("http"), "https:": require("https") };
-const {ConnectionError, JsonParseError} = require("./errors");
+const {ConnectionError, JsonParseError} = require("../errors");
 const querystring = require("querystring");
-const {getAgent} = require("./agents");
+const {getAgent} = require("../agents");
+const {formatJson} = require("./utils");
 
 module.exports = (url, options = {}) => {
   const u = new URL(url);
@@ -21,8 +22,9 @@ module.exports = (url, options = {}) => {
     path: pathname + search + hash
   };
 
-  const { body } = options;
+  const { body, responseFormat } = options;
   delete options.body;
+  delete options.responseFormat;
 
   const opts = Object.assign(
     { agent },
@@ -38,9 +40,9 @@ module.exports = (url, options = {}) => {
       .request(opts, resp => {
         let data = "";
         resp.on("data", chunk => (data += chunk));
-        resp.on("end", () => {
+        resp.on("end", async () => {
           try {
-            resolve(JSON.parse(data))
+            resolve((await formatJson(data, responseFormat)))
           }
           catch(e) {
             reject(new JsonParseError(data, resp.statusCode, resp.headers));
