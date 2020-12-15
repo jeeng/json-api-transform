@@ -44,6 +44,7 @@ const operators = {
   find: (arr, path, value) => arr.find(root => this.transform(root, path) === value),
   filter: (arr, path, value) => arr.filter(root => this.transform(root, path) === value),
   map: (arr, path) => arr.map(root => this.transform(root, path)),
+  split: (string, delimiter) => string.split(delimiter),
   flat: (arr) => arr.flat()
 };
 
@@ -145,3 +146,4 @@ module.exports.transform = (root, mapping) => {
 
   return transformed;
 };
+
