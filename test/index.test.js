@@ -34,6 +34,7 @@ describe(`@TJA tests`, function () {
   it("@test4 - mapping of an array", () => fetchTestSet("test4"));
   it("@test5 - mapping of an object", () => fetchTestSet("test5"));
   it("@test6 - mapping with map", () => fetchTestSet("test6"));
+
   it("@test7 - 2-layered mapping", () => fetchTestSet("test7"));
   it("@test8 - 2-layered map", () => fetchTestSet("test8"));
   it("@test9 - real fetch (GET)", async () => {
@@ -184,4 +185,7 @@ describe(`@TJA tests`, function () {
       expect(parseInt(item.price)).to.be.an('number');
     })
   });
+
+  it("@test24 - mapping with split and map", () => fetchTestSet("test24"));
+  it("@test25 - mapping with split", () => fetchTestSet("test25"));
 });

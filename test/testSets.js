@@ -129,5 +129,27 @@ module.exports = {
     response: [[{visible: true, id: 1}, {visible: false, id: 2}, {visible: true, id: 3}]],
     mapping: {a: `root[map({"items":"root[filter(root.visible, true)]"})]`},
     expected: {a: [{items: [{visible: true, id: 1}, {visible: true, id: 3}]}]}
-  }
+  },
+  test24: {
+    response: { items: [{ id: "one::xxx" }, { id: "two::zzz" }, { id: "three::yyy" }] },
+    mapping: {
+      normalized: `root.items[map({"index": "root.id[split(::)][0]", "tail": "root.id[split(::)][1]"})]`
+    },
+    expected: {
+      normalized: [{ index: "one", tail: "xxx" }, { index: "two", tail: "zzz" }, { index: "three", tail: "yyy" }]
+    }
+  },
+  test25: {
+    response: { combined: "val1_val2_val3" },
+    mapping: {
+      firstVal: "root.combined[split(_)][0]",
+      secondVal: "root.combined[split(_)][1]",
+      thirdVal: "root.combined[split(_)][2]",
+    },
+    expected: {
+      firstVal: "val1",
+      secondVal: "val2",
+      thirdVal: "val3"
+    }
+  },
 };
